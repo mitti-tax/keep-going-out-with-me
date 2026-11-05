@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A question for Tiana</title>
+<meta name="theme-color" content="#ffe6ee">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shrikhand&family=Nunito:wght@400;600;800&family=Caveat:wght@600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blush: #ffe6ee;
+    --cream-pink: #fff7fa;
+    --petal: #f9bccf;
+    --sakura: #ef7fa6;
+    --rose: #b02f5e;
+    --bark: #5a3438;
+  }
+  * { box-sizing: border-box; margin: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; }
+  body {
+    font-family: "Nunito", system-ui, sans-serif;
+    color: var(--bark);
+    background:
+      radial-gradient(circle at 85% 90%, #ffd3e1 0, transparent 40%),
+      radial-gradient(circle at 10% 15%, #fff 0, transparent 35%),
+      var(--blush);
+    overflow-x: hidden;
+  }
+
+  /* --- branch --- */
+  .branch {
+    position: fixed; top: -10px; left: -20px;
+    width: min(560px, 90vw); height: auto;
+    pointer-events: none;
+  }
+  .branch.flip { top: auto; left: auto; bottom: -30px; right: -30px; transform: rotate(180deg); width: min(420px, 70vw); opacity: .85; }
+
+  /* --- falling petals --- */
+  .petals { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
+  .petals i {
+    position: absolute; top: -5vh; left: var(--x);
+    width: 14px; height: 11px;
+    background: linear-gradient(135deg, #fff 0%, var(--petal) 60%, var(--sakura) 100%);
+    border-radius: 100% 0 100% 0;
+    opacity: .85;
+    animation: fall var(--d) linear var(--w) infinite, sway 3s ease-in-out infinite alternate;
+  }
+  @keyframes fall { to { top: 105vh; transform: rotate(540deg); } }
+  @keyframes sway { from { margin-left: -20px; } to { margin-left: 20px; } }
+
+  /* --- main card --- */
+  main {
+    position: relative;
+    min-height: 100%; min-height: 100svh;
+    display: grid; place-items: center;
+    padding: 64px 16px;
+    text-align: center;
+  }
+  .hey { font-family: "Caveat", cursive; font-size: 2rem; color: var(--rose); }
+  .old {
+    margin-top: 12px;
+    font-size: 1.15rem; font-weight: 600;
+    color: #a07b80;
+    position: relative; display: inline-block;
+  }
+  .old s { text-decoration-thickness: 2px; text-decoration-color: var(--sakura); }
+  .old::after {
+    content: "you already said yes to this one";
+    position: absolute; left: 100%; top: -1.4em;
+    width: max-content; margin-left: 6px;
+    font-family: "Caveat", cursive; font-size: 1.2rem; color: var(--sakura);
+    transform: rotate(-6deg);
+  }
+  h1 {
+    font-family: "Shrikhand", serif; font-weight: 400;
+    font-size: clamp(2.6rem, 9vw, 5.5rem);
+    line-height: 1.02;
+    color: var(--rose);
+    margin: 18px auto 0; max-width: 11ch;
+    text-shadow: 3px 3px 0 var(--petal);
+  }
+  .answers { margin-top: 40px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; align-items: center; }
+  .answers a {
+    font-weight: 800; font-size: 1.1rem; text-decoration: none;
+    padding: 14px 28px; border-radius: 999px;
+    transition: transform .2s ease;
+  }
+  .yes { background: var(--rose); color: #fff; box-shadow: 0 6px 0 #7e1f42; }
+  .yes:hover { transform: translateY(-3px) rotate(-2deg); }
+  .yes.big { background: var(--sakura); box-shadow: 0 6px 0 var(--rose); }
+  .no { color: #a07b80; font-size: .9rem !important; padding: 12px 18px !important; min-height: 44px; }
+  .no::after { content: "no"; }
+  .no:hover::after, .no:focus-visible::after { content: "nice try 🌸"; }
+  .fine {
+    margin-top: 44px; font-size: .85rem; color: #a07b80; max-width: 36ch; margin-inline: auto;
+  }
+  a:focus-visible { outline: 3px dashed var(--rose); outline-offset: 4px; }
+
+  /* --- the yes screen --- */
+  #yes {
+    position: fixed; inset: 0;
+    display: grid; place-items: center; padding: 32px 16px;
+    background: rgba(255, 230, 238, .92);
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    overflow-y: auto;
+    text-align: center;
+    opacity: 0; visibility: hidden;
+    transition: opacity .6s ease, visibility .6s;
+  }
+  #yes:target { opacity: 1; visibility: visible; }
+  #yes:target .note { animation: pop .7s cubic-bezier(.3, 1.6, .5, 1) both .15s; }
+  @keyframes pop { from { transform: scale(.6) rotate(-8deg); opacity: 0; } }
+  .note {
+    background: var(--cream-pink);
+    padding: 40px 32px 32px; border-radius: 28px;
+    max-width: 440px;
+    box-shadow: 0 0 0 10px #fff, 0 20px 50px rgba(176, 47, 94, .25);
+    position: relative;
+  }
+  .note svg.stamp { position: absolute; top: -34px; left: 50%; translate: -50% 0; width: 68px; }
+  .note h2 { font-family: "Shrikhand", serif; font-weight: 400; color: var(--rose); font-size: 2.4rem; line-height: 1.1; }
+  .note p { margin-top: 14px; line-height: 1.6; }
+  .note ul { list-style: none; padding: 0; margin-top: 18px; text-align: left; display: grid; gap: 8px; }
+  .note li::before { content: "🌸"; margin-right: 10px; }
+  .sig { font-family: "Caveat", cursive; font-size: 1.8rem; color: var(--rose); margin-top: 20px !important; }
+  .again { display: inline-block; margin-top: 16px; color: #a07b80; font-size: .9rem; }
+
+  @media (max-width: 600px) {
+    .old::after { position: static; display: block; margin: 4px 0 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .petals { display: none; }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="bloom" viewBox="-50 -50 100 100">
+      <g fill="#f9bccf" stroke="#ef7fa6" stroke-width="2">
+        <path id="p" d="M0 0 C -18 -20 -16 -42 -6 -46 L 0 -40 L 6 -46 C 16 -42 18 -20 0 0Z"/>
+        <use href="#p" transform="rotate(72)"/>
+        <use href="#p" transform="rotate(144)"/>
+        <use href="#p" transform="rotate(216)"/>
+        <use href="#p" transform="rotate(288)"/>
+      </g>
+      <circle r="7" fill="#fff"/>
+      <g fill="#b02f5e"><circle cx="0" cy="-12" r="2.5"/><circle cx="11" cy="-4" r="2.5"/><circle cx="7" cy="10" r="2.5"/><circle cx="-7" cy="10" r="2.5"/><circle cx="-11" cy="-4" r="2.5"/></g>
+    </symbol>
+    <symbol id="branch" viewBox="0 0 560 300">
+      <path d="M-10 40 C 120 60 200 30 300 80 S 470 120 560 110" fill="none" stroke="#5a3438" stroke-width="9" stroke-linecap="round"/>
+      <path d="M190 52 C 220 110 240 140 300 170" fill="none" stroke="#5a3438" stroke-width="5" stroke-linecap="round"/>
+      <path d="M380 105 C 400 60 430 40 470 30" fill="none" stroke="#5a3438" stroke-width="4" stroke-linecap="round"/>
+      <use href="#bloom" x="60" y="10" width="70" height="70"/>
+      <use href="#bloom" x="150" y="40" width="54" height="54" transform="rotate(20 177 67)"/>
+      <use href="#bloom" x="250" y="130" width="62" height="62"/>
+      <use href="#bloom" x="290" y="50" width="48" height="48" transform="rotate(-15 314 74)"/>
+      <use href="#bloom" x="440" y="5" width="56" height="56"/>
+      <use href="#bloom" x="490" y="80" width="44" height="44"/>
+      <circle cx="220" cy="95" r="7" fill="#ef7fa6"/>
+      <circle cx="360" cy="108" r="6" fill="#f9bccf"/>
+      <circle cx="415" cy="52" r="5" fill="#ef7fa6"/>
+    </symbol>
+  </defs>
+</svg>
+
+<svg class="branch" viewBox="0 0 560 300" aria-hidden="true"><use href="#branch"/></svg>
+<svg class="branch flip" viewBox="0 0 560 300" aria-hidden="true"><use href="#branch"/></svg>
+
+<div class="petals" aria-hidden="true">
+  <i style="--x:5%;  --d:11s; --w:0s"></i>
+  <i style="--x:14%; --d:14s; --w:3s"></i>
+  <i style="--x:23%; --d:9s;  --w:6s"></i>
+  <i style="--x:31%; --d:13s; --w:1s"></i>
+  <i style="--x:42%; --d:10s; --w:8s"></i>
+  <i style="--x:50%; --d:15s; --w:4s"></i>
+  <i style="--x:58%; --d:12s; --w:2s"></i>
+  <i style="--x:67%; --d:9s;  --w:7s"></i>
+  <i style="--x:75%; --d:14s; --w:5s"></i>
+  <i style="--x:83%; --d:11s; --w:9s"></i>
+  <i style="--x:91%; --d:13s; --w:2.5s"></i>
+  <i style="--x:97%; --d:10s; --w:6.5s"></i>
+</div>
+
+<main>
+  <div>
+    <p class="hey">Hey Tiana,</p>
+    <p class="old"><s>Will you go out with me?</s></p>
+    <h1>Will you keep going out with me?</h1>
+    <div class="answers">
+      <a class="yes" href="#yes">Yes</a>
+      <a class="yes big" href="#yes">Obviously yes</a>
+      <a class="no" href="#yes" aria-label="No (it still means yes)"></a>
+    </div>
+    <p class="fine">Renews automatically every day. Cancellation requires a written request and 400 kisses, paid in advance.</p>
+  </div>
+</main>
+
+<section id="yes" aria-label="Your answer">
+  <div class="note">
+    <svg class="stamp" viewBox="0 0 100 100" aria-hidden="true"><use href="#bloom"/></svg>
+    <h2>Renewed!</h2>
+    <p>Good. Same terms as before, plus:</p>
+    <ul>
+      <li>More picnics under trees like these</li>
+      <li>You get the last bite, always</li>
+      <li>Unlimited forehead kisses</li>
+      <li>Me, still very into you</li>
+    </ul>
+    <p class="sig">Yours, again and again</p>
+    <a class="again" href="#">Read the question again</a>
+  </div>
+</section>
+
+</body>
+</html>
